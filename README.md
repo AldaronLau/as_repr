@@ -15,7 +15,8 @@ Check out the [documentation] for examples.
 
 ### Features
 
- - Const trait workaround for stable Rust exposing a safe transmute to `repr` type with a trait
+ - Const trait workaround for stable Rust exposing a safe transmute to the
+   `repr` type with a trait
 
 ## MSRV
 
