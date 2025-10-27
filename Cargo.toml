@@ -2,7 +2,7 @@
 name = "as_repr"
 version = "1.0.1"
 edition = "2024"
-description = "Ranged integer types and math"
+description = "Rust trait for constant `#[repr(T)]` conversions"
 license = "Apache-2.0 OR BSL-1.0 OR MIT"
 documentation = "https://docs.rs/as_repr"
 homepage = "https://github.com/AldaronLau/as_repr/releases"

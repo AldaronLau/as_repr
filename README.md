@@ -9,7 +9,7 @@
 [![Crates.io](https://img.shields.io/crates/l/as_repr)](https://github.com/search?q=repo%3AAldaronLau%2Fas_repr+path%3A**%2FLICENSE*&type=code)
 [![Docs.rs](https://docs.rs/as_repr/badge.svg)](https://docs.rs/as_repr/)
 
-Rust Trait for constant `#[repr(T)]` conversions 
+Rust trait for constant `#[repr(T)]` conversions 
 
 Check out the [documentation] for examples.
 

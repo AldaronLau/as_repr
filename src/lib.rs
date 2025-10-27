@@ -1,4 +1,4 @@
-//! Rust Trait for constant #[repr(T)] conversions.
+//! Rust trait for constant #[repr(T)] conversions.
 //!
 //! Uses a const trait workaround for stable Rust exposing a safe transmute to
 //! the `repr` type with a trait.
