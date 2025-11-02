@@ -1,6 +1,6 @@
 [package]
 name = "as_repr"
-version = "1.0.1"
+version = "1.1.0"
 edition = "2024"
 description = "Rust trait for constant `#[repr(T)]` conversions"
 license = "Apache-2.0 OR BSL-1.0 OR MIT"

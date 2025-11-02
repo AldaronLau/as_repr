@@ -83,6 +83,10 @@ pub unsafe trait AsRepr<T> {}
 // unsafe: all types `#[repr]` themselves
 unsafe impl<T> AsRepr<T> for T {}
 
+// unsafe: `[T; 1]` and `[T]` have the same repr
+unsafe impl<T> AsRepr<[T; 1]> for T {}
+unsafe impl<T> AsRepr<T> for [T; 1] {}
+
 /// Convert a type implementing [`AsRepr`] to `T`.
 pub const fn as_repr<T>(value: impl AsRepr<T>) -> T {
     let value = ManuallyDrop::new(value);
