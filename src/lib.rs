@@ -86,8 +86,29 @@ unsafe impl<T> AsRepr<T> for T {}
 // unsafe: `[T; 1]` and `[T]` have the same repr
 unsafe impl<T> AsRepr<[T; 1]> for T {}
 unsafe impl<T> AsRepr<T> for [T; 1] {}
+unsafe impl<T> AsRepr<[[T; 1]; 1]> for T {}
+unsafe impl<T> AsRepr<T> for [[T; 1]; 1] {}
+unsafe impl<T> AsRepr<[[[T; 1]; 1]; 1]> for T {}
+unsafe impl<T> AsRepr<T> for [[[T; 1]; 1]; 1] {}
+unsafe impl<T> AsRepr<[[[[T; 1]; 1]; 1]; 1]> for T {}
+unsafe impl<T> AsRepr<T> for [[[[T; 1]; 1]; 1]; 1] {}
 
 /// Convert a type implementing [`AsRepr`] to `T`.
+///
+/// # Example
+///
+/// Types and arrays of size one have the same representation.
+///
+/// ```rust
+/// assert_eq!(as_repr::as_repr::<[u32; 1]>(4u32), [4u32]);
+/// assert_eq!(as_repr::as_repr::<u32>([4u32]), 4u32);
+///
+/// assert_eq!(as_repr::as_repr::<[[u32; 1]; 1]>(4u32), [[4u32]]);
+/// assert_eq!(as_repr::as_repr::<u32>([[4u32]]), 4u32);
+///
+/// assert_eq!(as_repr::as_repr::<[[u32; 1]; 1]>([4u32]), [[4u32]]);
+/// assert_eq!(as_repr::as_repr::<[u32; 1]>([[4u32]]), [4u32]);
+/// ```
 pub const fn as_repr<T>(value: impl AsRepr<T>) -> T {
     let value = ManuallyDrop::new(value);
 
