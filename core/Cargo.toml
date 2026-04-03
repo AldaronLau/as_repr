@@ -19,3 +19,7 @@ repository.workspace = true
 keywords.workspace = true
 categories.workspace = true
 rust-version.workspace = true
+
+[features]
+cmp = ["inherent"]
+inherent = []

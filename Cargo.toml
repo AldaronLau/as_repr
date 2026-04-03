@@ -40,3 +40,7 @@ version = "=1.3.1"
 [dependencies.as_repr-derive]
 version = "=1.3.1"
 optional = true
+
+[features]
+#cmp = ["as_repr-core/cmp"]
+#inherent = ["as_repr-core/inherent"]

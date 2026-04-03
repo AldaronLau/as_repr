@@ -33,6 +33,11 @@
     rustdoc::redundant_explicit_links
 )]
 
+#[cfg(feature = "cmp")]
+pub mod cmp;
+#[cfg(feature = "inherent")]
+pub mod inherent;
+
 use core::{
     mem::{self, ManuallyDrop},
     num::{
@@ -122,6 +127,10 @@ unsafe impl AsRepr<Option<NonZeroI64>> for NonZeroI64 {}
 unsafe impl AsRepr<Option<NonZeroI128>> for NonZeroI128 {}
 unsafe impl AsRepr<Option<NonZeroIsize>> for NonZeroIsize {}
 
+// unsafe: References to sized types have the same representation as pointers
+unsafe impl<T, U> AsRepr<*const T> for &U where U: AsRepr<T> + Sized {}
+unsafe impl<T, U> AsRepr<*mut T> for &mut U where U: AsRepr<T> + Sized {}
+
 /// Convert a type implementing [`AsRepr`] to `T`.
 ///
 /// # Example
@@ -144,4 +153,38 @@ pub const fn as_repr<T>(value: impl AsRepr<T>) -> T {
 
     // safety: not calling drop allows us to move the data with a "copy"
     unsafe { mem::transmute_copy(&value) }
+}
+
+/// Convert a reference to type implementing [`AsRepr`] to `&T`.
+///
+/// # Example
+///
+/// Types and arrays of size one have the same representation.
+///
+/// ```rust
+/// # use as_repr_core as as_repr;
+/// let a: &u32 = &42;
+/// let b: &[u32; 1] = &[42];
+///
+/// assert_eq!(as_repr::as_repr_ref::<[u32; 1]>(a), b);
+/// ```
+pub const fn as_repr_ref<T>(value: &impl AsRepr<T>) -> &T {
+    unsafe { mem::transmute(value) }
+}
+
+/// Convert a slice of a type implementing [`AsRepr`] to `&[T]`.
+///
+/// # Example
+///
+/// Types and arrays of size one have the same representation.
+///
+/// ```rust
+/// # use as_repr_core as as_repr;
+/// let a: &[u32] = &[1, 2, 3];
+/// let b: &[[u32; 1]] = &[[1], [2], [3]];
+///
+/// assert_eq!(as_repr::as_repr_slice::<[u32; 1]>(a), b);
+/// ```
+pub const fn as_repr_slice<T>(value: &[impl AsRepr<T>]) -> &[T] {
+    unsafe { mem::transmute(value) }
 }
