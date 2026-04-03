@@ -129,6 +129,7 @@ unsafe impl AsRepr<Option<NonZeroIsize>> for NonZeroIsize {}
 /// Types and arrays of size one have the same representation.
 ///
 /// ```rust
+/// # use as_repr_core as as_repr;
 /// assert_eq!(as_repr::as_repr::<[u32; 1]>(4u32), [4u32]);
 /// assert_eq!(as_repr::as_repr::<u32>([4u32]), 4u32);
 ///
