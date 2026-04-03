@@ -1,0 +1,21 @@
+[package]
+name = "as_repr-derive"
+documentation = "https://docs.rs/as_repr-derive"
+readme = "README.md"
+include = [
+    "/LICENSE_APACHE",
+    "/LICENSE_BOOST",
+    "/LICENSE_MIT",
+    "/README.md",
+    "/src/*",
+    "/examples/*",
+]
+version.workspace = true
+edition.workspace = true
+description.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+rust-version.workspace = true
