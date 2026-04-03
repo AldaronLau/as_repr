@@ -1,3 +1,5 @@
+//! Rust trait for constant #[repr(T)] conversions.
+
 #![doc(
     html_logo_url = "https://ardaku.github.io/mm/logo.svg",
     html_favicon_url = "https://ardaku.github.io/mm/icon.svg"
