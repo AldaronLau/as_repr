@@ -35,8 +35,16 @@
 
 #[cfg(feature = "cmp")]
 pub mod cmp;
+#[cfg(feature = "float")]
+pub mod float;
 #[cfg(feature = "inherent")]
 pub mod inherent;
+#[cfg(feature = "int")]
+pub mod int;
+#[cfg(feature = "num")]
+pub mod num;
+#[cfg(feature = "ops")]
+pub mod ops;
 
 use core::{
     mem::{self, ManuallyDrop},
@@ -130,6 +138,11 @@ unsafe impl AsRepr<Option<NonZeroIsize>> for NonZeroIsize {}
 // unsafe: References to sized types have the same representation as pointers
 unsafe impl<T, U> AsRepr<*const T> for &U where U: AsRepr<T> + Sized {}
 unsafe impl<T, U> AsRepr<*mut T> for &mut U where U: AsRepr<T> + Sized {}
+
+// unsafe: floats are represented in bits as unsigned integers
+// <https://doc.rust-lang.org/std/primitive.f32.html#method.from_bits>
+unsafe impl AsRepr<u32> for f32 {}
+unsafe impl AsRepr<u64> for f64 {}
 
 /// Convert a type implementing [`AsRepr`] to `T`.
 ///

@@ -21,5 +21,9 @@ categories.workspace = true
 rust-version.workspace = true
 
 [features]
-cmp = ["inherent"]
-inherent = []
+"cmp" = ["inherent"]
+"float" = ["inherent"]
+"inherent" = []
+"int" = ["inherent"]
+"num" = ["inherent"]
+"ops" = ["inherent"]

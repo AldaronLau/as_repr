@@ -4,40 +4,30 @@ use core::{cmp::Ordering, time::Duration};
 
 use crate::inherent::AsReprInherent;
 
-/// A type that may be used for comparisons
 #[doc(hidden)]
 #[non_exhaustive]
 #[derive(Debug)]
 pub enum Type {
-    /// [`u8`]
     U8,
-    /// [`u16`]
     U16,
-    /// [`u32`]
     U32,
-    /// [`u64`]
     U64,
-    /// [`u128`]
     U128,
-    /// [`i8`]
     I8,
-    /// [`i16`]
     I16,
-    /// [`i32`]
     I32,
-    /// [`i64`]
     I64,
-    /// [`i128`]
     I128,
-    /// [`f32`]
     F32,
-    /// [`f64`]
     F64,
-    /// [`Duration`]
     Duration,
 }
 
 /// Trait indicating that a type may be compared by representation
+///
+/// # Safety
+///
+///  - The type specified in the associated constant must match the repr
 pub unsafe trait Cmp: Copy {
     /// The type to compare as; must be `AsRepr<Type::Variant>`
     const TYPE: Type;
@@ -52,26 +42,26 @@ where
 }
 
 macro_rules! cmp {
-    ($type:ty, $name:ident, $zero:expr, $nan:expr) => {
+    ($type:ty, $name:ident) => {
         unsafe impl Cmp for $type {
             const TYPE: Type = Type::$name;
         }
     };
 }
 
-cmp!(i8, I8, 0, None);
-cmp!(i16, I16, 0, None);
-cmp!(i32, I32, 0, None);
-cmp!(i64, I64, 0, None);
-cmp!(i128, I128, 0, None);
-cmp!(u8, U8, 0, None);
-cmp!(u16, U16, 0, None);
-cmp!(u32, U32, 0, None);
-cmp!(u64, U64, 0, None);
-cmp!(u128, U128, 0, None);
-cmp!(f32, F32, 0.0, Some(f32::NAN));
-cmp!(f64, F64, 0.0, Some(f64::NAN));
-cmp!(Duration, Duration, Duration::ZERO, None);
+cmp!(i8, I8);
+cmp!(i16, I16);
+cmp!(i32, I32);
+cmp!(i64, I64);
+cmp!(i128, I128);
+cmp!(u8, U8);
+cmp!(u16, U16);
+cmp!(u32, U32);
+cmp!(u64, U64);
+cmp!(u128, U128);
+cmp!(f32, F32);
+cmp!(f64, F64);
+cmp!(Duration, Duration);
 
 macro_rules! cmp_as {
     ($a:ident, $b:ident, $type:ty) => {{
@@ -182,6 +172,13 @@ where
 /// assert!(cmp::cmp(A(1), A(-1)).is_gt());
 /// assert!(cmp::cmp(A(0), A(0)).is_eq());
 /// ```
+///
+/// Fails compilation:
+///
+/// ```rust,compile_fail,E0080
+/// # use as_repr_core::cmp;
+/// assert!(cmp::cmp(1.0, 1.0).is_eq());
+/// ```
 pub const fn cmp<T>(a: T, b: T) -> Ordering
 where
     T: Cmp,
@@ -213,6 +210,13 @@ where
 }
 
 /// Return true if `a` is NaN.
+///
+/// ```rust
+/// # use as_repr_core::cmp;
+/// assert!(cmp::is_nan(f32::NAN));
+/// assert!(!cmp::is_nan(1.0));
+/// assert!(!cmp::is_nan(1));
+/// ```
 pub const fn is_nan<T>(a: T) -> bool
 where
     T: Cmp,
@@ -237,6 +241,14 @@ where
 }
 
 /// Return true if `a` is zero.
+///
+/// ```rust
+/// # use core::time::Duration;
+/// # use as_repr_core::cmp;
+/// assert!(cmp::is_zero(Duration::ZERO));
+/// assert!(cmp::is_zero(0));
+/// assert!(!cmp::is_zero(1));
+/// ```
 pub const fn is_zero<T>(a: T) -> bool
 where
     T: Cmp,
@@ -261,6 +273,14 @@ where
 }
 
 /// Return true if `a` is greater than `b`.
+///
+/// ```rust
+/// # use core::time::Duration;
+/// # use as_repr_core::cmp;
+/// assert!(cmp::gt(Duration::new(1, 30), Duration::new(1, 29)));
+/// assert!(cmp::gt(Duration::from_secs(2), Duration::from_secs(1)));
+/// assert!(cmp::gt(42, 39));
+/// ```
 pub const fn gt<T>(a: T, b: T) -> bool
 where
     T: Cmp,
@@ -273,6 +293,18 @@ where
 }
 
 /// Return true if `a` is greater than or equal to `b`.
+///
+/// ```rust
+/// # use core::time::Duration;
+/// # use as_repr_core::cmp;
+/// assert!(cmp::ge(Duration::new(1, 30), Duration::new(1, 29)));
+/// assert!(cmp::ge(Duration::from_secs(2), Duration::from_secs(1)));
+/// assert!(cmp::ge(42, 39));
+///
+/// assert!(cmp::ge(Duration::new(1, 300), Duration::new(1, 300)));
+/// assert!(cmp::ge(Duration::from_secs(3), Duration::from_secs(3)));
+/// assert!(cmp::ge(39, 39));
+/// ```
 pub const fn ge<T>(a: T, b: T) -> bool
 where
     T: Cmp,
@@ -285,6 +317,14 @@ where
 }
 
 /// Return true if `a` is less than `b`.
+///
+/// ```rust
+/// # use core::time::Duration;
+/// # use as_repr_core::cmp;
+/// assert!(cmp::lt(Duration::new(1, 29), Duration::new(1, 30)));
+/// assert!(cmp::lt(Duration::from_secs(1), Duration::from_secs(2)));
+/// assert!(cmp::lt(39, 42));
+/// ```
 pub const fn lt<T>(a: T, b: T) -> bool
 where
     T: Cmp,
@@ -297,6 +337,18 @@ where
 }
 
 /// Return true if `a` is less than or equal to `b`.
+///
+/// ```rust
+/// # use core::time::Duration;
+/// # use as_repr_core::cmp;
+/// assert!(cmp::le(Duration::new(1, 29), Duration::new(1, 30)));
+/// assert!(cmp::le(Duration::from_secs(1), Duration::from_secs(2)));
+/// assert!(cmp::le(39, 42));
+///
+/// assert!(cmp::le(Duration::new(1, 300), Duration::new(1, 300)));
+/// assert!(cmp::le(Duration::from_secs(3), Duration::from_secs(3)));
+/// assert!(cmp::le(39, 39));
+/// ```
 pub const fn le<T>(a: T, b: T) -> bool
 where
     T: Cmp,
@@ -309,6 +361,12 @@ where
 }
 
 /// Return the minimum a `a` and `b`.
+///
+/// ```rust
+/// # use as_repr_core::cmp;
+/// assert_eq!(4.0, cmp::min(4.2, 4.0));
+/// assert_eq!(4, cmp::min(4, 5));
+/// ```
 pub const fn min<T>(a: T, b: T) -> T
 where
     T: Cmp,
@@ -327,6 +385,12 @@ where
 }
 
 /// Return the maximum a `a` and `b`.
+///
+/// ```rust
+/// # use as_repr_core::cmp;
+/// assert_eq!(4.2, cmp::max(4.2, 4.0));
+/// assert_eq!(5, cmp::max(4, 5));
+/// ```
 pub const fn max<T>(a: T, b: T) -> T
 where
     T: Cmp,
