@@ -13,11 +13,13 @@ pub enum Type {
     U32,
     U64,
     U128,
+    Usize,
     I8,
     I16,
     I32,
     I64,
     I128,
+    Isize,
     F32,
     F64,
     Duration,
@@ -54,11 +56,13 @@ cmp!(i16, I16);
 cmp!(i32, I32);
 cmp!(i64, I64);
 cmp!(i128, I128);
+cmp!(isize, Isize);
 cmp!(u8, U8);
 cmp!(u16, U16);
 cmp!(u32, U32);
 cmp!(u64, U64);
 cmp!(u128, U128);
+cmp!(usize, Usize);
 cmp!(f32, F32);
 cmp!(f64, F64);
 cmp!(Duration, Duration);
@@ -112,11 +116,13 @@ where
         Type::U32 => cmp_as!(a, b, u32),
         Type::U64 => cmp_as!(a, b, u64),
         Type::U128 => cmp_as!(a, b, u128),
+        Type::Usize => cmp_as!(a, b, usize),
         Type::I8 => cmp_as!(a, b, i8),
         Type::I16 => cmp_as!(a, b, i16),
         Type::I32 => cmp_as!(a, b, i32),
         Type::I64 => cmp_as!(a, b, i64),
         Type::I128 => cmp_as!(a, b, i128),
+        Type::Isize => cmp_as!(a, b, isize),
         Type::F32 => {
             let (less, greater, impossible) = cmp_as_float!(a, b, f32);
 
@@ -193,11 +199,13 @@ where
             | Type::U32
             | Type::U64
             | Type::U128
+            | Type::Usize
             | Type::I8
             | Type::I16
             | Type::I32
             | Type::I64
             | Type::I128
+            | Type::Isize
             | Type::Duration => {}
         }
     }
@@ -231,11 +239,13 @@ where
         | Type::U32
         | Type::U64
         | Type::U128
+        | Type::Usize
         | Type::I8
         | Type::I16
         | Type::I32
         | Type::I64
         | Type::I128
+        | Type::Isize
         | Type::Duration => false,
     }
 }
@@ -263,11 +273,13 @@ where
         Type::U32 => unsafe { *a.cast::<u32>() == 0 },
         Type::U64 => unsafe { *a.cast::<u64>() == 0 },
         Type::U128 => unsafe { *a.cast::<u128>() == 0 },
+        Type::Usize => unsafe { *a.cast::<usize>() == 0 },
         Type::I8 => unsafe { *a.cast::<i8>() == 0 },
         Type::I16 => unsafe { *a.cast::<i16>() == 0 },
         Type::I32 => unsafe { *a.cast::<i32>() == 0 },
         Type::I64 => unsafe { *a.cast::<i64>() == 0 },
         Type::I128 => unsafe { *a.cast::<i128>() == 0 },
+        Type::Isize => unsafe { *a.cast::<isize>() == 0 },
         Type::Duration => unsafe { *a.cast::<Duration>() }.is_zero(),
     }
 }
