@@ -41,7 +41,7 @@ jobs:
       - name: Install Miri
         run: |
           rustup toolchain install nightly \
-              --profile minimal
+              --profile minimal \
               -c miri \
               ${{ matrix.cc }} \
               --no-self-update
@@ -61,20 +61,20 @@ jobs:
         - tc: beta
         - tc: nightly
         - os: ubuntu-latest
-          cc: '-t 
-            aarch64-linux-android,
-            i686-pc-windows-gnu,
-            i686-unknown-linux-gnu,
-            x86_64-unknown-illumos,
-            i686-unknown-freebsd,
-            x86_64-unknown-redox'
+          cc: "-t \
+            aarch64-linux-android,\
+            i686-pc-windows-gnu,\
+            i686-unknown-linux-gnu,\
+            x86_64-unknown-illumos,\
+            i686-unknown-freebsd,\
+            x86_64-unknown-redox"
         - os: macos-latest
-          cc: '-t 
-            aarch64-apple-ios,
-            x86_64-apple-darwin,
-            wasm32-wasip1,
-            wasm32-wasip2,
-            wasm32-unknown-unknown'
+          cc: "-t \
+            aarch64-apple-ios,\
+            x86_64-apple-darwin,\
+            wasm32-wasip1,\
+            wasm32-wasip2,\
+            wasm32-unknown-unknown"
     steps:
       - uses: taiki-e/checkout-action@v1
       - uses: taiki-e/install-action@v2
