@@ -56,7 +56,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        tc: [${{ env.msrv_with_patch }}, stable, beta, nightly]
+        tc: ["${{ env.msrv_with_patch }}", stable, beta, nightly]
         include:
         - tc: stable
         - tc: beta
