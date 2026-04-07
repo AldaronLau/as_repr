@@ -79,10 +79,10 @@ jobs:
         run: |
           for target in $(echo ${{ matrix.cc }} | sed 's/-t //g' | sed 's/,/ /g')
           do
-            cargo build --workspace "--target=$target" $CARGO_HACK_OPTIONS
-            cargo clippy --workspace "--target=$target" $CARGO_HACK_OPTIONS -- -D warnings
+            cargo hack build --workspace "--target=$target" $CARGO_HACK_OPTIONS
+            cargo hack clippy --workspace "--target=$target" $CARGO_HACK_OPTIONS -- -D warnings
           done
       - name: Check doc generation succeeds
         run: cargo doc --all-features --no-deps
       - name: Running tests
-        run: cargo test --workspace $CARGO_HACK_OPTIONS
+        run: cargo hack test --workspace $CARGO_HACK_OPTIONS
