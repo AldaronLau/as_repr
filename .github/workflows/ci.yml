@@ -8,7 +8,14 @@ defaults:
     shell: bash
     working-directory: .
 env:
-  CARGO_HACK_OPTIONS: --feature-powerset --mutually-exclusive-features cmp,inherent --mutually-exclusive-features int,inherent --mutually-exclusive-features float,inherent --mutually-exclusive-features num,inherent --mutually-exclusive-features ops,inherent
+  cargo_hack_flags: >
+    --feature-powerset \
+    --mutually-exclusive-features cmp,inherent \
+    --mutually-exclusive-features int,inherent \
+    --mutually-exclusive-features float,inherent \
+    --mutually-exclusive-features num,inherent \
+    --mutually-exclusive-features ops,inherent
+  msrv_with_patch: 1.91.1
 jobs:
   miri:
     name: "Miri"
@@ -34,7 +41,11 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.we }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Install Miri
         run: |
-          rustup toolchain install nightly --profile minimal -c miri ${{ matrix.cc }} --no-self-update
+          rustup toolchain install nightly \
+              --profile minimal
+              -c miri \
+              ${{ matrix.cc }} \
+              --no-self-update
           rustup override set nightly
           cargo miri setup
       - name: Test with Miri
@@ -45,15 +56,28 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        tc: [1.91.0, stable, beta, nightly]
+        tc: [${{ env.msrv_with_patch }}, stable, beta, nightly]
         include:
         - tc: stable
         - tc: beta
         - tc: nightly
         - os: ubuntu-latest
-          cc: -t aarch64-linux-android,i686-pc-windows-gnu,i686-unknown-linux-gnu,x86_64-unknown-illumos,i686-unknown-freebsd,x86_64-unknown-redox
+          cc: >
+            -t \
+            aarch64-linux-android,\
+            i686-pc-windows-gnu,\
+            i686-unknown-linux-gnu,\
+            x86_64-unknown-illumos,\
+            i686-unknown-freebsd,\
+            x86_64-unknown-redox
         - os: macos-latest
-          cc: -t aarch64-apple-ios,x86_64-apple-darwin,wasm32-wasip1,wasm32-wasip2,wasm32-unknown-unknown
+          cc: >
+            -t \
+            aarch64-apple-ios,\
+            x86_64-apple-darwin,\
+            wasm32-wasip1,\
+            wasm32-wasip2,\
+            wasm32-unknown-unknown
     steps:
       - uses: taiki-e/checkout-action@v1
       - uses: taiki-e/install-action@v2
@@ -70,23 +94,37 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.tc }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Install Rust
         run: |
-          rustup toolchain install ${{ matrix.tc }} --profile minimal -c clippy,rustfmt ${{ matrix.cc }} --no-self-update
+          rustup toolchain install ${{ matrix.tc }} \
+              --profile minimal \
+              -c clippy,rustfmt \
+              ${{ matrix.cc }} \
+              --no-self-update
           rustup override set ${{ matrix.tc }}
       - name: Check code formatting
         run: cargo fmt --check
       - name: Checking clippy for warnings
         run: |
-          cargo hack build --workspace --all-targets $CARGO_HACK_OPTIONS
-          cargo hack clippy --workspace --all-targets $CARGO_HACK_OPTIONS -- -D warnings
+          cargo hack build --workspace --all-targets $cargo_hack_flags
+          cargo hack clippy \
+              --workspace \
+              --all-targets \
+              $cargo_hack_flags \
+              -- \
+              -D warnings
       - if: ${{ matrix.cc }}
         name: Checking cross-compilation works
         run: |
           for target in $(echo ${{ matrix.cc }} | sed 's/-t //g' | sed 's/,/ /g')
           do
-            cargo hack build --workspace "--target=$target" $CARGO_HACK_OPTIONS
-            cargo hack clippy --workspace "--target=$target" $CARGO_HACK_OPTIONS -- -D warnings
+            cargo hack build --workspace "--target=$target" $cargo_hack_flags
+            cargo hack clippy \
+                --workspace \
+                "--target=$target" \
+                $cargo_hack_flags \
+                -- \
+                -D warnings
           done
       - name: Check doc generation succeeds
         run: cargo doc --all-features --no-deps
       - name: Running tests
-        run: cargo hack test --workspace $CARGO_HACK_OPTIONS
+        run: cargo hack test --workspace $cargo_hack_flags
