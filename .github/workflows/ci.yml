@@ -9,11 +9,11 @@ defaults:
     working-directory: .
 env:
   cargo_hack_flags: >
-    --feature-powerset \
-    --mutually-exclusive-features cmp,inherent \
-    --mutually-exclusive-features int,inherent \
-    --mutually-exclusive-features float,inherent \
-    --mutually-exclusive-features num,inherent \
+    --feature-powerset
+    --mutually-exclusive-features cmp,inherent
+    --mutually-exclusive-features int,inherent
+    --mutually-exclusive-features float,inherent
+    --mutually-exclusive-features num,inherent
     --mutually-exclusive-features ops,inherent
 jobs:
   miri:
@@ -61,9 +61,20 @@ jobs:
         - tc: beta
         - tc: nightly
         - os: ubuntu-latest
-          cc: -t aarch64-linux-android,i686-pc-windows-gnu,i686-unknown-linux-gnu,x86_64-unknown-illumos,i686-unknown-freebsd,x86_64-unknown-redox
+          cc: '-t 
+            aarch64-linux-android,
+            i686-pc-windows-gnu,
+            i686-unknown-linux-gnu,
+            x86_64-unknown-illumos,
+            i686-unknown-freebsd,
+            x86_64-unknown-redox'
         - os: macos-latest
-          cc: -t aarch64-apple-ios,x86_64-apple-darwin,wasm32-wasip1,wasm32-wasip2,wasm32-unknown-unknown
+          cc: '-t 
+            aarch64-apple-ios,
+            x86_64-apple-darwin,
+            wasm32-wasip1,
+            wasm32-wasip2,
+            wasm32-unknown-unknown'
     steps:
       - uses: taiki-e/checkout-action@v1
       - uses: taiki-e/install-action@v2
@@ -91,11 +102,7 @@ jobs:
       - name: Checking clippy for warnings
         run: |
           cargo hack build --workspace --all-targets $cargo_hack_flags
-          cargo hack clippy \
-              --workspace \
-              --all-targets \
-              $cargo_hack_flags \
-              -- \
+          cargo hack clippy --workspace --all-targets $cargo_hack_flags -- \
               -D warnings
       - if: ${{ matrix.cc }}
         name: Checking cross-compilation works
@@ -103,12 +110,8 @@ jobs:
           for target in $(echo ${{ matrix.cc }} | sed 's/-t //g' | sed 's/,/ /g')
           do
             cargo hack build --workspace "--target=$target" $cargo_hack_flags
-            cargo hack clippy \
-                --workspace \
-                "--target=$target" \
-                $cargo_hack_flags \
-                -- \
-                -D warnings
+            cargo hack clippy --workspace "--target=$target" $cargo_hack_flags \
+                -- -D warnings
           done
       - name: Check doc generation succeeds
         run: cargo doc --all-features --no-deps
