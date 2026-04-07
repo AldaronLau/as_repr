@@ -3,6 +3,10 @@ on:
   push:
     branches: ['v*']
   pull_request:
+defaults:
+  run:
+    shell: bash
+    working-directory: .
 env:
   CARGO_HACK_OPTIONS: --feature-powerset --mutually-exclusive-features cmp,inherent --mutually-exclusive-features int,inherent --mutually-exclusive-features float,inherent --mutually-exclusive-features num,inherent --mutually-exclusive-features ops,inherent
 jobs:
