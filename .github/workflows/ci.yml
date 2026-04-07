@@ -41,10 +41,10 @@ jobs:
       - name: Install Miri
         run: |
           rustup toolchain install nightly \
-              --profile minimal \
-              -c miri \
-              ${{ matrix.cc }} \
-              --no-self-update
+            --profile minimal \
+            -c miri \
+            ${{ matrix.cc }} \
+            --no-self-update
           rustup override set nightly
           cargo miri setup
       - name: Test with Miri
@@ -92,10 +92,10 @@ jobs:
       - name: Install Rust
         run: |
           rustup toolchain install ${{ matrix.tc }} \
-              --profile minimal \
-              -c clippy,rustfmt \
-              ${{ matrix.cc }} \
-              --no-self-update
+            --profile minimal \
+            -c clippy,rustfmt \
+            ${{ matrix.cc }} \
+            --no-self-update
           rustup override set ${{ matrix.tc }}
       - name: Check code formatting
         run: cargo fmt --check
@@ -103,7 +103,7 @@ jobs:
         run: |
           cargo hack build --workspace --all-targets $cargo_hack_flags
           cargo hack clippy --workspace --all-targets $cargo_hack_flags -- \
-              -D warnings
+            -D warnings
       - if: ${{ matrix.cc }}
         name: Checking cross-compilation works
         run: |
@@ -111,7 +111,7 @@ jobs:
           do
             cargo hack build --workspace "--target=$target" $cargo_hack_flags
             cargo hack clippy --workspace "--target=$target" $cargo_hack_flags \
-                -- -D warnings
+              -- -D warnings
           done
       - name: Check doc generation succeeds
         run: cargo doc --all-features --no-deps
