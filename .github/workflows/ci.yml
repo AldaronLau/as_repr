@@ -15,7 +15,6 @@ env:
     --mutually-exclusive-features float,inherent \
     --mutually-exclusive-features num,inherent \
     --mutually-exclusive-features ops,inherent
-  msrv_with_patch: 1.91.1
 jobs:
   miri:
     name: "Miri"
@@ -56,7 +55,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        tc: ["${{ msrv_with_patch }}", stable, beta, nightly]
+        tc: ["1.91", "stable", "beta", "nightly"]
         include:
         - tc: stable
         - tc: beta
