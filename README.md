@@ -17,6 +17,17 @@ Check out the [documentation] for examples.
 
  - Const trait workaround for stable Rust exposing a safe transmute to the
    `repr` type with a trait
+ - Optionally-enabled const trait workarounds for generic integer and float
+   operations and comparisons on the inherent representation
+   - _**`inherent`**_: Providing `AsReprInherent` built on `AsRepr` but chooses
+     a specific representation to interpret as for const operations
+   - _**`cmp`**_: Providing const fns generic for comparable types
+   - _**`float`**_: Providing const fns generic for floating point types
+   - _**`int`**_: Providing const fns generic for integer types
+   - _**`num`**_: Providing const fns generic for numeric types (floats and
+     ints)
+   - _**`ops`**_: Providing const fns generic for mathematical types (numeric
+     types and `Duration`s)
 
 ## MSRV
 
