@@ -3,7 +3,7 @@ members = [".", "core", "derive"]
 
 [workspace.package]
 edition = "2024"
-version = "1.5.0"
+version = "1.6.0"
 description = "Rust trait for constant `#[repr(T)]` conversions"
 license = "Apache-2.0 OR BSL-1.0 OR MIT"
 homepage = "https://github.com/AldaronLau/as_repr/releases"

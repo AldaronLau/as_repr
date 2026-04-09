@@ -37,6 +37,24 @@
 //! assert_eq!(const { as_repr::as_repr::<Id>(IdName::Ferris) }, Id(0));
 //! assert_eq!(const { as_repr::as_repr::<Id>(IdName::Corro) }, Id(1));
 //! ```
+//!
+//! # Optional Features
+//!
+//! There are also modules that provide additional functionality.  They are only
+//! built when a feature with a matching name is enabled.
+//!
+//!  - _**[`inherent`]**_: Providing [`AsReprInherent`] built on [`AsRepr`] but
+//!    chooses a specific representation to interpret as for const operations
+//!  - _**[`cmp`]**_: Providing const fns generic for comparable types
+//!  - _**[`float`]**_: Providing const fns generic for floating point types
+//!  - _**[`int`]**_: Providing const fns generic for integer types
+//!  - _**[`num`]**_: Providing const fns generic for numeric types (floats and
+//!    ints)
+//!  - _**[`ops`]**_: Providing const fns generic for mathematical types
+//!    (numeric types and [`Duration`]s)
+//!
+//! [`AsReprInherent`]: inherent::AsReprInherent
+//! [`Duration`]: core::time::Duration
 
 #![doc(
     html_logo_url = "https://ardaku.github.io/mm/logo.svg",
