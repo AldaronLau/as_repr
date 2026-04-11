@@ -147,17 +147,30 @@ unsafe impl<T, U> AsRepr<Option<&T>> for Option<&mut U> where
 unsafe impl<T, U> AsRepr<*mut T> for &U where U: AsRepr<T> + Sized {}
 unsafe impl<T, U> AsRepr<*const T> for &U where U: AsRepr<T> + Sized {}
 unsafe impl<T, U> AsRepr<NonNull<T>> for &U where U: AsRepr<T> + Sized {}
+unsafe impl<T, U> AsRepr<Option<NonNull<T>>> for &U where U: AsRepr<T> + Sized {}
 unsafe impl<T, U> AsRepr<*mut T> for &mut U where U: AsRepr<T> + Sized {}
 unsafe impl<T, U> AsRepr<*const T> for &mut U where U: AsRepr<T> + Sized {}
 unsafe impl<T, U> AsRepr<NonNull<T>> for &mut U where U: AsRepr<T> + Sized {}
+unsafe impl<T, U> AsRepr<Option<NonNull<T>>> for &mut U where
+    U: AsRepr<T> + Sized
+{
+}
 
 // unsafe: Optional references to sized types have the same representation as
 // pointers
 // <https://doc.rust-lang.org/std/primitive.reference.html>
 unsafe impl<T, U> AsRepr<*mut T> for Option<&U> where U: AsRepr<T> + Sized {}
 unsafe impl<T, U> AsRepr<*const T> for Option<&U> where U: AsRepr<T> + Sized {}
+unsafe impl<T, U> AsRepr<Option<NonNull<T>>> for Option<&U> where
+    U: AsRepr<T> + Sized
+{
+}
 unsafe impl<T, U> AsRepr<*mut T> for Option<&mut U> where U: AsRepr<T> + Sized {}
 unsafe impl<T, U> AsRepr<*const T> for Option<&mut U> where U: AsRepr<T> + Sized {}
+unsafe impl<T, U> AsRepr<Option<NonNull<T>>> for Option<&mut U> where
+    U: AsRepr<T> + Sized
+{
+}
 
 // unsafe: `NonNull<T>` to `Option<NonNull<T>>` transmute is sound
 // <https://doc.rust-lang.org/std/ptr/struct.NonNull.html#representation>
@@ -187,12 +200,19 @@ unsafe impl AsRepr<u64> for f64 {}
 unsafe impl<T> AsRepr<usize> for *mut T where T: Sized {}
 unsafe impl<T> AsRepr<usize> for *const T where T: Sized {}
 unsafe impl<T> AsRepr<usize> for NonNull<T> where T: Sized {}
+unsafe impl<T> AsRepr<usize> for Option<NonNull<T>> where T: Sized {}
 
 // unsafe: `*mut T`, `*const T` and `NonNull<T>` have the same representation
 unsafe impl<T, U> AsRepr<*const T> for *mut U where U: AsRepr<T> + Sized {}
-unsafe impl<T, U> AsRepr<NonNull<T>> for *mut U where U: AsRepr<T> + Sized {}
+unsafe impl<T, U> AsRepr<Option<NonNull<T>>> for *mut U where
+    U: AsRepr<T> + Sized
+{
+}
 unsafe impl<T, U> AsRepr<*mut T> for *const U where U: AsRepr<T> + Sized {}
-unsafe impl<T, U> AsRepr<NonNull<T>> for *const U where U: AsRepr<T> + Sized {}
+unsafe impl<T, U> AsRepr<Option<NonNull<T>>> for *const U where
+    U: AsRepr<T> + Sized
+{
+}
 unsafe impl<T, U> AsRepr<*const T> for NonNull<U> where U: AsRepr<T> + Sized {}
 unsafe impl<T, U> AsRepr<*mut T> for NonNull<U> where U: AsRepr<T> + Sized {}
 
