@@ -1,7 +1,9 @@
 name: Publish to crates.io
 on:
   push:
-    tags: ['derive-v*']
+    tags:
+      - 'derive-v[0-9]+.[0-9]+.[0-9]+'
+      - 'derive-v[0-9]+.[0-9]+.[0-9]+-pre.[0-9]+'
 jobs:
   publish:
     runs-on: ubuntu-latest
