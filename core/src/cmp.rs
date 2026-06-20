@@ -1,6 +1,6 @@
 //! _**`cmp`**_ Constant partial order on inherent representations
 
-use core::{cmp::Ordering, time::Duration};
+use core::{cmp::Ordering, convert::Infallible, time::Duration};
 
 use crate::inherent::AsReprInherent;
 
@@ -23,6 +23,8 @@ pub enum Type {
     F32,
     F64,
     Duration,
+    Unit,
+    Never,
 }
 
 /// Trait indicating that a type may be compared by representation
@@ -66,6 +68,8 @@ cmp!(usize, Usize);
 cmp!(f32, F32);
 cmp!(f64, F64);
 cmp!(Duration, Duration);
+cmp!((), Unit);
+cmp!(Infallible, Never);
 
 macro_rules! cmp_as {
     ($a:ident, $b:ident, $type:ty) => {{
@@ -155,6 +159,8 @@ where
                 (a < b, a > b)
             }
         }
+        Type::Unit => (false, false),
+        Type::Never => unreachable!(),
     };
 
     Some(ORDERING[less as usize][greater as usize])
@@ -206,7 +212,9 @@ where
             | Type::I64
             | Type::I128
             | Type::Isize
-            | Type::Duration => {}
+            | Type::Duration
+            | Type::Unit
+            | Type::Never => {}
         }
     }
 
@@ -247,6 +255,8 @@ where
         | Type::I128
         | Type::Isize
         | Type::Duration => false,
+        Type::Unit => panic!("comparison of unit to NaN is nonsensical"),
+        Type::Never => unreachable!(),
     }
 }
 
@@ -281,6 +291,8 @@ where
         Type::I128 => unsafe { *a.cast::<i128>() == 0 },
         Type::Isize => unsafe { *a.cast::<isize>() == 0 },
         Type::Duration => unsafe { *a.cast::<Duration>() }.is_zero(),
+        Type::Unit => panic!("comparison of unit to zero is nonsensical"),
+        Type::Never => unreachable!(),
     }
 }
 
