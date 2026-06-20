@@ -38,11 +38,11 @@ rust-version.workspace = true
 all-features = true
 
 [dependencies.as_repr-core]
-version = "=1.7.0"
+version = "=1.8.0"
 #path = "core"
 
 [dependencies.as_repr-derive]
-version = "=1.7.0"
+version = "=1.8.0"
 #path = "derive"
 optional = true
 
