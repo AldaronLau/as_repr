@@ -89,4 +89,6 @@
     rustdoc::redundant_explicit_links
 )]
 
+mod macros;
+
 pub use as_repr_core::*;
