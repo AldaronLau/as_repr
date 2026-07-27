@@ -219,7 +219,7 @@ unsafe impl<T, U> AsRepr<*mut T> for NonNull<U> where U: AsRepr<T> + Sized {}
 
 // unsafe: `Pin<T>` and `T` have same representation (only sound one way)
 // https://doc.rust-lang.org/std/pin/struct.Pin.html#layout-and-abi
-unsafe impl<T> AsRepr<T> for Pin<T> {}
+unsafe impl<T, U> AsRepr<Pin<&T>> for Pin<&mut U> where U: AsRepr<T> {}
 
 /// Convert a type implementing [`AsRepr`] to `T`.
 ///
