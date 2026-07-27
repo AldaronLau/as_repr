@@ -53,6 +53,7 @@ use core::{
         NonZeroIsize, NonZeroU8, NonZeroU16, NonZeroU32, NonZeroU64,
         NonZeroU128, NonZeroUsize,
     },
+    pin::Pin,
     ptr::NonNull,
 };
 
@@ -215,6 +216,10 @@ unsafe impl<T, U> AsRepr<Option<NonNull<T>>> for *const U where
 }
 unsafe impl<T, U> AsRepr<*const T> for NonNull<U> where U: AsRepr<T> + Sized {}
 unsafe impl<T, U> AsRepr<*mut T> for NonNull<U> where U: AsRepr<T> + Sized {}
+
+// unsafe: `Pin<T>` and `T` have same representation (only sound one way)
+// https://doc.rust-lang.org/std/pin/struct.Pin.html#layout-and-abi
+unsafe impl<T> AsRepr<T> for Pin<T> {}
 
 /// Convert a type implementing [`AsRepr`] to `T`.
 ///
