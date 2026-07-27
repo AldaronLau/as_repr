@@ -1,5 +1,19 @@
 /// _**`macros`**_ Define a newtype wrapper with a transparent representation
 ///
+/// For `pub struct Wrapper(Inner)`:
+///
+///  - `Wrapper` implements `AsRepr<Inner>`
+///  - `&Wrapper` implements `AsRepr<&Inner>`
+///  - `&mut Wrapper` implements `AsRepr<&mut Inner>`
+///  - `Pin<&Wrapper>` implements `AsRepr<Pin<&Inner>>`
+///  - `Pin<&mut Wrapper>` implements `AsRepr<Pin<&mut Inner>>`
+///
+/// If the newtype is in a public API, make sure the `Inner` type is either
+/// private or inaccessible so consumers cannot invalidate the newtype's
+/// invariants.
+///
+/// # Example
+///
 /// ```rust
 /// use std::fmt;
 ///
@@ -28,5 +42,11 @@ macro_rules! transparent_newtype {
 
         // safety: `$newtype` is `#[repr(transparent)]` referring to `$inner`
         unsafe impl $crate::AsRepr<$inner> for $newtype { }
+        unsafe impl $crate::AsRepr<&$inner> for &$newtype { }
+        unsafe impl $crate::AsRepr<&mut $inner> for &mut $newtype { }
+        unsafe impl $crate::AsRepr<core::pin::Pin<&$inner>>
+            for core::pin::Pin<&$newtype> { }
+        unsafe impl $crate::AsRepr<core::pin::Pin<&mut $inner>>
+            for core::pin::Pin<&mut $newtype> { }
     };
 }
