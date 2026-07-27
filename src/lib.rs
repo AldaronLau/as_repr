@@ -53,6 +53,13 @@
 //!  - _**[`ops`]**_: Providing const fns generic for mathematical types
 //!    (numeric types and [`Duration`]s)
 //!
+//! There are also these additional optional features:
+//!
+//!  - _**`derive`**_: Providing convenience derive macro(s) for implementing
+//!    [`AsRepr`] (TODO)
+//!  - _**`macros`**_: Providing convenience macro(s) for implementing
+//!    [`AsRepr`]
+//!
 //! [`AsReprInherent`]: inherent::AsReprInherent
 //! [`Duration`]: core::time::Duration
 
@@ -89,6 +96,7 @@
     rustdoc::redundant_explicit_links
 )]
 
+#[cfg(feature = "macros")]
 mod macros;
 
 pub use as_repr_core::*;

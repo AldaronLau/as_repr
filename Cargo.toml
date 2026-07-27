@@ -47,9 +47,13 @@ version = "=1.8.0"
 optional = true
 
 [features]
+"default" = ["derive", "macros"]
+
 "cmp" = ["as_repr-core/cmp"]
+"derive" = ["dep:as_repr-derive"]
 "float" = ["as_repr-core/float"]
 "inherent" = ["as_repr-core/inherent"]
 "int" = ["as_repr-core/int"]
+"macros" = []
 "num" = ["as_repr-core/num"]
 "ops" = ["as_repr-core/ops"]
