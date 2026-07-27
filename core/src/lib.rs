@@ -57,7 +57,7 @@ use core::{
     ptr::NonNull,
 };
 
-/// Trait that allows usage with [`as_repr()`]
+/// Trait indicating that [`as_repr::<T>()`] is sound for `Self`
 ///
 /// # Safety
 ///
@@ -139,10 +139,20 @@ unsafe impl AsRepr<Option<NonZeroIsize>> for NonZeroIsize {}
 
 // unsafe: Mutable references can be coerced to immutable
 unsafe impl<T, U> AsRepr<&T> for &mut U where U: AsRepr<T> + Sized {}
+unsafe impl<T, U> AsRepr<&[T]> for &mut [U] where U: AsRepr<T> + Sized {}
 unsafe impl<T, U> AsRepr<Option<&T>> for Option<&mut U> where
     U: AsRepr<T> + Sized
 {
 }
+unsafe impl<T, U> AsRepr<Option<&[T]>> for Option<&mut [U]> where
+    U: AsRepr<T> + Sized
+{
+}
+
+// unsafe: `Pin<T>` and `T` have the same representation
+// https://doc.rust-lang.org/std/pin/struct.Pin.html#layout-and-abi
+unsafe impl<T, U> AsRepr<Pin<&T>> for Pin<&mut U> where U: AsRepr<T> {}
+unsafe impl<T, U> AsRepr<Pin<&[T]>> for Pin<&mut [U]> where U: AsRepr<T> {}
 
 // unsafe: References to sized types have the same representation as pointers
 unsafe impl<T, U> AsRepr<*mut T> for &U where U: AsRepr<T> + Sized {}
@@ -217,11 +227,7 @@ unsafe impl<T, U> AsRepr<Option<NonNull<T>>> for *const U where
 unsafe impl<T, U> AsRepr<*const T> for NonNull<U> where U: AsRepr<T> + Sized {}
 unsafe impl<T, U> AsRepr<*mut T> for NonNull<U> where U: AsRepr<T> + Sized {}
 
-// unsafe: `Pin<T>` and `T` have same representation (only sound one way)
-// https://doc.rust-lang.org/std/pin/struct.Pin.html#layout-and-abi
-unsafe impl<T, U> AsRepr<Pin<&T>> for Pin<&mut U> where U: AsRepr<T> {}
-
-/// Convert a type implementing [`AsRepr`] to `T`.
+/// Convert a type implementing [`AsRepr<T>`] into a `T`.
 ///
 /// # Example
 ///
@@ -238,6 +244,7 @@ unsafe impl<T, U> AsRepr<Pin<&T>> for Pin<&mut U> where U: AsRepr<T> {}
 /// assert_eq!(as_repr::as_repr::<[[u32; 1]; 1]>([4u32]), [[4u32]]);
 /// assert_eq!(as_repr::as_repr::<[u32; 1]>([[4u32]]), [4u32]);
 /// ```
+#[inline(always)]
 pub const fn as_repr<T>(value: impl AsRepr<T>) -> T {
     let value = ManuallyDrop::new(value);
 
@@ -245,7 +252,7 @@ pub const fn as_repr<T>(value: impl AsRepr<T>) -> T {
     unsafe { mem::transmute_copy(&value) }
 }
 
-/// Convert a reference to type implementing [`AsRepr`] to `&T`.
+/// Convert a reference to type implementing [`AsRepr<T>`] into a `&T`.
 ///
 /// # Example
 ///
@@ -258,11 +265,12 @@ pub const fn as_repr<T>(value: impl AsRepr<T>) -> T {
 ///
 /// assert_eq!(as_repr::as_repr_ref::<[u32; 1]>(a), b);
 /// ```
+#[inline(always)]
 pub const fn as_repr_ref<T>(value: &impl AsRepr<T>) -> &T {
     unsafe { mem::transmute(value) }
 }
 
-/// Convert a slice of a type implementing [`AsRepr`] to `&[T]`.
+/// Convert a slice of a type implementing [`AsRepr<T>`] into a `&[T]`.
 ///
 /// # Example
 ///
@@ -275,6 +283,53 @@ pub const fn as_repr_ref<T>(value: &impl AsRepr<T>) -> &T {
 ///
 /// assert_eq!(as_repr::as_repr_slice::<[u32; 1]>(a), b);
 /// ```
+#[inline(always)]
 pub const fn as_repr_slice<T>(value: &[impl AsRepr<T>]) -> &[T] {
+    unsafe { mem::transmute(value) }
+}
+
+/// Convert a pinned reference to a type implementing [`AsRepr<T>`] into a
+/// `Pin<&T>`.
+///
+/// # Example
+///
+/// Types and arrays of size one have the same representation.
+///
+/// ```rust
+/// # use core::pin::Pin;
+/// # use as_repr_core as as_repr;
+/// let a: Pin<&[u32; 6]> = Pin::new(&[4u32, 8u32, 15u32, 16u32, 23u32, 42u32]);
+/// let b: Pin<&[[u32; 6]; 1]> = Pin::new(
+///     &[[4u32, 8u32, 15u32, 16u32, 23u32, 42u32]],
+/// );
+///
+/// assert_eq!(as_repr::as_repr_pinned_ref::<[[u32; 6]; 1]>(a), b);
+/// ```
+#[inline(always)]
+pub const fn as_repr_pinned_ref<T>(value: Pin<&impl AsRepr<T>>) -> Pin<&T> {
+    unsafe { mem::transmute(value) }
+}
+
+/// Convert a pinned slice of a type implementing [`AsRepr<T>`] into a
+/// `Pin<&[T]>`.
+///
+/// # Example
+///
+/// Types and arrays of size one have the same representation.
+///
+/// ```rust
+/// # use core::pin::Pin;
+/// # use as_repr_core as as_repr;
+/// let a: Pin<&[u32]> = Pin::new(&[4u32, 8u32, 15u32, 16u32, 23u32, 42u32]);
+/// let b: Pin<&[[u32; 1]]> = Pin::new(
+///     &[[4u32], [8u32], [15u32], [16u32], [23u32], [42u32]],
+/// );
+///
+/// assert_eq!(as_repr::as_repr_pinned_slice::<[u32; 1]>(a), b);
+/// ```
+#[inline(always)]
+pub const fn as_repr_pinned_slice<T>(
+    value: Pin<&[impl AsRepr<T>]>,
+) -> Pin<&[T]> {
     unsafe { mem::transmute(value) }
 }
