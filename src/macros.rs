@@ -8,9 +8,9 @@
 ///  - `Pin<&Wrapper>` implements `AsRepr<Pin<&Inner>>`
 ///  - `Pin<&mut Wrapper>` implements `AsRepr<Pin<&mut Inner>>`
 ///
-/// If the newtype is in a public API, make sure the `Inner` type is either
-/// private or inaccessible so consumers cannot invalidate the newtype's
-/// invariants.
+/// If the newtype is in a public API, and also has invariants that any access
+/// to `Inner` must uphold, make sure the `Inner` type is either private or
+/// inaccessible so consumers cannot invalidate the newtype's invariants.
 ///
 /// # Example
 ///
