@@ -4,15 +4,11 @@ version = 4
 
 [[package]]
 name = "as_repr"
-version = "1.10.0"
+version = "1.11.0"
 dependencies = [
- "as_repr-core 1.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "as_repr-derive 1.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "as_repr-core 1.10.0",
+ "as_repr-derive 1.10.0",
 ]
-
-[[package]]
-name = "as_repr-core"
-version = "1.10.0"
 
 [[package]]
 name = "as_repr-core"
@@ -21,11 +17,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a53d4fc07d0410d7bdc0ae66338d1ff7ef9408e14ec339ef95ec902d6fa5f613"
 
 [[package]]
-name = "as_repr-derive"
-version = "1.10.0"
+name = "as_repr-core"
+version = "1.11.0"
 
 [[package]]
 name = "as_repr-derive"
 version = "1.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9729565eb23cb204c019955ac39e92858e22e9a10265678eecf5f460797ed2a1"
+
+[[package]]
+name = "as_repr-derive"
+version = "1.11.0"

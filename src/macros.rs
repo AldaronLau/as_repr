@@ -35,18 +35,30 @@
 /// ```
 #[macro_export]
 macro_rules! transparent_newtype {
-    { $( #[ $attr:meta ] )* $vis:vis struct $newtype:ident($inner:ty); } => {
+    {
+        $( #[ $attr:meta ] )*
+        $vis:vis
+        struct
+        $newtype:ident
+        $(< $($generic:ident),+ $(,)? >)?
+        ($inner:ty);
+    } => {
         $( #[$attr] )*
         #[repr(transparent)]
-        $vis struct $newtype($inner);
+        $vis struct $newtype $(< $($generic),* >)? ($inner);
 
         // safety: `$newtype` is `#[repr(transparent)]` referring to `$inner`
-        unsafe impl $crate::AsRepr<$inner> for $newtype { }
-        unsafe impl $crate::AsRepr<&$inner> for &$newtype { }
-        unsafe impl $crate::AsRepr<&mut $inner> for &mut $newtype { }
-        unsafe impl $crate::AsRepr<core::pin::Pin<&$inner>>
-            for core::pin::Pin<&$newtype> { }
-        unsafe impl $crate::AsRepr<core::pin::Pin<&mut $inner>>
-            for core::pin::Pin<&mut $newtype> { }
+        unsafe impl $(< $($generic),* >)? $crate::AsRepr<$inner>
+            for $newtype $(< $($generic),* >)? { }
+        unsafe impl $(< $($generic),* >)? $crate::AsRepr<&$inner>
+            for &$newtype $(< $($generic),* >)? { }
+        unsafe impl $(< $($generic),* >)? $crate::AsRepr<&mut $inner>
+            for &mut $newtype $(< $($generic),* >)? { }
+        unsafe impl $(< $($generic),* >)?
+            $crate::AsRepr<core::pin::Pin<&$inner>>
+            for core::pin::Pin<&$newtype $(< $($generic),* >)?> { }
+        unsafe impl $(< $($generic),* >)?
+            $crate::AsRepr<core::pin::Pin<&mut $inner>>
+            for core::pin::Pin<&mut $newtype $(< $($generic),* >)?> { }
     };
 }
