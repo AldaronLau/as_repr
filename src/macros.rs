@@ -62,3 +62,43 @@ macro_rules! transparent_newtype {
             for core::pin::Pin<&mut $newtype $(< $($generic),* >)?> { }
     };
 }
+
+/// _**`macros`**_ Safely implement `AsRepr`, cascading from an existing
+/// representation
+///
+/// If `T` is `AsRepr<U>` and `Self` is `AsRepr<T>`, then it's safe to
+/// implement `AsRepr<U>` for `Self`.  This new exposed representation cascades
+/// from the existing representation.
+///
+/// ```rust
+/// use std::num::NonZero;
+///
+/// /// Wrapper type
+/// as_repr::transparent_newtype! {
+///     #[derive(Eq, PartialEq, Debug)]
+///     pub struct Wrapper(i32);
+/// }
+///
+/// as_repr::as_repr_cascading!(Wrapper as i32; Option<NonZero<i32>>, [i32; 1]);
+///
+/// assert_eq!(as_repr::as_repr::<i32>(Wrapper(42)), 42);
+/// assert_eq!(as_repr::as_repr::<[i32; 1]>(Wrapper(42)), [42]);
+/// assert_eq!(
+///     as_repr::as_repr::<Option<NonZero<i32>>>(Wrapper(42)),
+///     NonZero::new(42),
+/// );
+/// ```
+#[macro_export]
+macro_rules! as_repr_cascading {
+    ($outer:ty as $inner:ty; $($repr:ty),* $(,)?) => {
+        $(
+            // safety: `$outer` is `#[repr($inner)]` and `$inner` is
+            // `#[repr($repr)]`, so we can assume `$outer` is `#[repr($repr)]`
+            unsafe impl $crate::AsRepr<$repr> for $outer
+            where
+                Self: $crate::AsRepr<$inner>,
+                $inner: $crate::AsRepr<$repr>,
+            { }
+        )*
+    };
+}
